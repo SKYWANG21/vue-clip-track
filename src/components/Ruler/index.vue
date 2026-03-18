@@ -25,13 +25,14 @@
       :class="{ 'ruler__cursor-handle--dragging': isDraggingCursor }" :style="{ left: cursorDisplayPosition + 'px' }"
       @mousedown.stop="handleCursorDragStart">
       <!-- 向下连接线 -->
-      <div class="ruler__cursor-line" @mousedown.stop="handleCursorDragStart" />
+      <div class="ruler__cursor-line" :style="{ height: `${cursorLineHeight}px` }"
+        @mousedown.stop="handleCursorDragStart" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { usePlaybackStore } from '@/stores/playback'
 import { useScaleStore } from '@/stores/scale'
 import { useTracksStore } from '@/stores/tracks'
@@ -66,6 +67,8 @@ const dragStore = useDragStore()
 const rulerRef = ref<HTMLElement>()
 const rulerWrapperRef = ref<HTMLElement>()
 const isDraggingCursor = ref(false)
+const cursorLineHeight = ref(0)
+let resizeObserver: ResizeObserver | null = null
 
 // 提供给外部组件判断是否在拖拽
 defineExpose({
@@ -262,6 +265,54 @@ function handleScroll() {
   }
 }
 
+function getCursorContainer(): HTMLElement | null {
+  if (!rulerRef.value) return null
+  return rulerRef.value.closest('.video-track') as HTMLElement | null
+}
+
+function updateCursorLineHeight() {
+  if (!rulerRef.value) return
+
+  const rulerRect = rulerRef.value.getBoundingClientRect()
+  const container = getCursorContainer()
+  const containerBottom = container
+    ? container.getBoundingClientRect().bottom
+    : window.innerHeight
+
+  // .ruler__cursor-line 使用 top: -5px，因此线条起点要减去 5px
+  const lineTop = rulerRect.top - 5
+  cursorLineHeight.value = Math.max(containerBottom - lineTop, 0)
+}
+
+onMounted(() => {
+  nextTick(() => {
+    updateCursorLineHeight()
+
+    resizeObserver = new ResizeObserver(() => {
+      updateCursorLineHeight()
+    })
+
+    if (rulerRef.value) {
+      resizeObserver.observe(rulerRef.value)
+    }
+
+    const container = getCursorContainer()
+    if (container) {
+      resizeObserver.observe(container)
+    }
+  })
+
+  window.addEventListener('resize', updateCursorLineHeight)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateCursorLineHeight)
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+    resizeObserver = null
+  }
+})
+
 // 监听外部滚动变化，同步到时间线
 watch(() => props.scrollLeft, (newScrollLeft) => {
   if (rulerWrapperRef.value && rulerWrapperRef.value.scrollLeft !== newScrollLeft) {
@@ -383,7 +434,7 @@ watch(cursorPosition, (newPos) => {
   left: 50%;
   transform: translateX(-50%);
   width: 2px;
-  height: 100vh;
+  height: 0;
   background: var(--color-primary);
   pointer-events: auto;
   cursor: grab;
