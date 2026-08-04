@@ -1,8 +1,9 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/*
+ * vue-clip-track 主题变量
+ *
+ * 此文件仅包含 CSS 自定义属性（设计令牌），不会污染宿主项目的全局样式。
+ * 用户可在项目中自行定义 *、body、#app、::-webkit-scrollbar 等全局样式。
+ */
 
 :root {
   /* 主色调变量 - 可通过 JS 动态修改 */
@@ -127,51 +128,4 @@
 
   /* 字体 */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-}
-
-body {
-  font-family: var(--font-family);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: var(--color-bg-dark);
-  color: var(--color-text-primary);
-  transition: background-color var(--transition-base), color var(--transition-base);
-  font-size: 13px;
-  /* 默认字体稍微调小 */
-  line-height: 1.5;
-}
-
-#app {
-  width: 100%;
-  height: 100vh;
-}
-
-/* 滚动条样式 - 更细 */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-border-light);
-  border-radius: var(--radius-full);
-  transition: background var(--transition-fast);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-border-strong);
-}
-
-::-webkit-scrollbar-corner {
-  background: transparent;
-}
-
-/* 选中文本样式 */
-::selection {
-  background: var(--color-primary);
-  color: #ffffff;
 }
