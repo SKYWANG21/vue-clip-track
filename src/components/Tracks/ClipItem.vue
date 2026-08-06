@@ -8,7 +8,9 @@
 
     <!-- Clip 内容 -->
     <div class="clip__content">
-      <component :is="clipComponent" :clip="clip as any" />
+      <slot name="clip-content" :clip="clip" :track="track">
+        <component :is="clipComponent" :clip="clip as any" />
+      </slot>
     </div>
 
     <!-- 右侧调整手柄 -->
