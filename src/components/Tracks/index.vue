@@ -26,7 +26,11 @@
           <div class="tracks__track-area-cell">
             <TrackArea :track="track" :scroll-left="scrollLeft" @scroll="handleAreaScroll"
               @context-menu="handleContextMenu" @track-context-menu="handleTrackContextMenu"
-              @add-transition="handleAddTransition" @drop-media="handleDropMedia" @seek="handleSeek" />
+              @add-transition="handleAddTransition" @drop-media="handleDropMedia" @seek="handleSeek">
+              <template #clip-content="slotProps">
+                <slot name="clip-content" v-bind="slotProps" />
+              </template>
+            </TrackArea>
           </div>
         </div>
       </div>

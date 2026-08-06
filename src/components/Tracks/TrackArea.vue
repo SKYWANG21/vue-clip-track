@@ -7,7 +7,11 @@
       <!-- Clips -->
       <ClipItem v-for="clip in track.clips" :key="clip.id" :clip="clip" :track="track" :data-clip-id="clip.id"
         @drag-start="handleClipDragStart" @resize-start="handleClipResizeStart" @click="handleClipClick"
-        @dblclick="handleClipDblClick" @context-menu="handleClipContextMenu" @add-transition="handleAddTransition" />
+        @dblclick="handleClipDblClick" @context-menu="handleClipContextMenu" @add-transition="handleAddTransition">
+        <template #clip-content="slotProps">
+          <slot name="clip-content" v-bind="slotProps" />
+        </template>
+      </ClipItem>
 
       <!-- 拖拽预览框 -->
       <DragPreview v-if="showDragPreview" :track="track" />
