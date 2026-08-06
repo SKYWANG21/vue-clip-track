@@ -64,3 +64,14 @@ beforeEach(() => {
 
 // Global Vue Test Utils config
 config.global.plugins = []
+
+// Mock ResizeObserver
+window.ResizeObserver = class ResizeObserver {
+  callback: ResizeObserverCallback
+  constructor(callback: ResizeObserverCallback) {
+    this.callback = callback
+  }
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+} as any
